@@ -115,16 +115,26 @@ function calcularProbabilidadesPorPeriodo(periodo) {
             const probImpar = (contagem[`bola${i}`].impar / total) * 100;
 
             const palpiteElement = document.getElementById(`palpite-bola${i}`);
+            const resultadoElement = document.getElementById(`resultado-bola${i}`);
+            const probabilidadeElement = document.getElementById(`probabilidade-bola${i}`);
 
             if (probPar > probImpar) {
                 palpiteElement.textContent = 'Par';
+                resultadoElement.textContent = 'Par';
+                probabilidadeElement.textContent = `${probPar.toFixed(2)}%`;
             } else {
                 palpiteElement.textContent = 'Ímpar';
+                resultadoElement.textContent = 'Ímpar';
+                probabilidadeElement.textContent = `${probImpar.toFixed(2)}%`;
             }
         } else {
             const palpiteElement= document.getElementById(`resultado-bola${i}`);
+            const resultadoElement = document.getElementById(`resultado-bola${i}`);
+            const probabilidadeElement = document.getElementById(`probabilidade-bola${i}`);
 
             palpiteElement.textContent = '-';
+            resultadoElement.textContent = '-';
+            probabilidadeElement.textContent = '-';
         }
     }
 }
