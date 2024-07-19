@@ -3,19 +3,18 @@
 body {
     width: 100%;
     height: 100vh;
-    overflow: auto;
     font-family: 'Roboto', sans-serif;
     background-color: #ccc;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* flex-direction: column; */
+    overflow-y: auto;
     color: #FFF;
 }
 .container {
     background-color: #444950;
-    min-height: 100vh;
+    min-height: 100%;
     width: 100%;
     display: flex;
     margin: auto;
@@ -151,7 +150,7 @@ th {
 }
 #historico-container{
     width: 100%;
-    overflow: auto;       
+    /* overflow: auto;        */
 
 }
 #historico{
