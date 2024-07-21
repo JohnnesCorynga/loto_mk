@@ -51,12 +51,17 @@ function atualizarHistorico(periodo) {
     historicoTableBody.innerHTML = '';
     let historicoFiltrado = [];
 
+    const agora = new Date();
+
     if (periodo === 0) {
         historicoFiltrado = historico;
     } else {
-        const agora = new Date();
+        // Filtra os dados conforme o período em horas até o momento atual
         const limiteInferior = new Date(agora.getTime() - periodo * 60 * 60 * 1000);
-        historicoFiltrado = historico.filter(sorteio => new Date(sorteio.date + ' ' + sorteio.hora) >= limiteInferior);
+        historicoFiltrado = historico.filter(sorteio => {
+            const dataHora = new Date(sorteio.date + ' ' + sorteio.hora);
+            return dataHora >= limiteInferior && dataHora <= agora;
+        });
     }
 
     historicoFiltrado.forEach((sorteio, index) => {
@@ -79,13 +84,19 @@ function calcularProbabilidadesPorPeriodo(periodo) {
     }
 
     let historicoFiltrado = [];
+    
+    const agora = new Date();
 
     if (periodo === 0) {
         historicoFiltrado = historico;
     } else {
-        const agora = new Date();
-        const limiteInferior = new Date(agora.getTime() - periodo * 60 * 60 * 1000);
-        historicoFiltrado = historico.filter(sorteio => new Date(sorteio.date + ' ' + sorteio.hora) >= limiteInferior);
+        // Filtra os dados conforme o período em horas até o momento atual
+        const inicioDoPeriodo = new Date(agora.getTime() - periodo * 60 * 60 * 1000);
+
+        historicoFiltrado = historico.filter(sorteio => {
+            const dataHora = new Date(sorteio.date + ' ' + sorteio.hora);
+            return dataHora >= inicioDoPeriodo && dataHora <= agora;
+        });
     }
 
     const contagem = {
@@ -98,7 +109,7 @@ function calcularProbabilidadesPorPeriodo(periodo) {
 
     historicoFiltrado.forEach(sorteio => {
         for (let i = 1; i <= 5; i++) {
-            const bola = sorteio[`number_${i}`];
+            const bola = parseInt(sorteio[`number_${i}`], 10);
             if (bola % 2 === 0) {
                 contagem[`bola${i}`].par++;
             } else {
@@ -106,6 +117,8 @@ function calcularProbabilidadesPorPeriodo(periodo) {
             }
         }
     });
+
+    const aleatoriedade = 80; // Valor que define a força da aleatoriedade (quanto maior, maior a variação)
 
     for (let i = 1; i <= 5; i++) {
         const total = historicoFiltrado.length;
@@ -115,15 +128,15 @@ function calcularProbabilidadesPorPeriodo(periodo) {
             const probImpar = (contagem[`bola${i}`].impar / total) * 100;
 
             const palpiteElement = document.getElementById(`palpite-bola${i}`);
+            const randomFactor = Math.random() * aleatoriedade - (aleatoriedade / 2);
 
-            if (probPar > probImpar) {
+            if (probPar + randomFactor > probImpar) {
                 palpiteElement.textContent = 'Par';
             } else {
                 palpiteElement.textContent = 'Ímpar';
             }
         } else {
-            const palpiteElement= document.getElementById(`resultado-bola${i}`);
-
+            const palpiteElement = document.getElementById(`palpite-bola${i}`);
             palpiteElement.textContent = '-';
         }
     }
