@@ -4,6 +4,7 @@ const historicoTableBody = document.querySelector('#historico tbody');
 const toggleHistoricoButton = document.getElementById('toggle-historico');
 const historicoContainer = document.getElementById('historico-container');
 const selectPeriodo = document.getElementById('select-periodo');
+const horaPalpiteElement = document.querySelector('.hora-palpite');
 let historico = [];
 
 fetchDataButton.addEventListener('click', function () {
@@ -37,6 +38,19 @@ function fetchAndCalculate(periodo = 1) {
             atualizarHistorico(periodo);
             calcularProbabilidadesPorPeriodo(periodo);
         
+            // Calcula o horário do próximo sorteio
+            if (historico.length > 0) {
+                const ultimoSorteio = historico[0];
+                const dataHoraUltimoSorteio = new Date(`${ultimoSorteio.date} ${ultimoSorteio.hora}`);
+                const dataHoraProximoSorteio = new Date(dataHoraUltimoSorteio.getTime() + 3 * 60 * 1000);
+
+                const horas = String(dataHoraProximoSorteio.getHours()).padStart(2, '0');
+                const minutos = String(dataHoraProximoSorteio.getMinutes()).padStart(2, '0');
+                horaPalpiteElement.textContent = `${horas}:${minutos}`;
+            } else {
+                horaPalpiteElement.textContent = '-';
+            }
+        
         })
         .catch(error => {
             console.error('Erro ao buscar dados:', error);
@@ -56,7 +70,6 @@ function atualizarHistorico(periodo) {
     if (periodo === 0) {
         historicoFiltrado = historico;
     } else {
-        // Filtra os dados conforme o período em horas até o momento atual
         const limiteInferior = new Date(agora.getTime() - periodo * 60 * 60 * 1000);
         historicoFiltrado = historico.filter(sorteio => {
             const dataHora = new Date(sorteio.date + ' ' + sorteio.hora);
@@ -90,7 +103,6 @@ function calcularProbabilidadesPorPeriodo(periodo) {
     if (periodo === 0) {
         historicoFiltrado = historico;
     } else {
-        // Filtra os dados conforme o período em horas até o momento atual
         const inicioDoPeriodo = new Date(agora.getTime() - periodo * 60 * 60 * 1000);
 
         historicoFiltrado = historico.filter(sorteio => {
@@ -118,26 +130,42 @@ function calcularProbabilidadesPorPeriodo(periodo) {
         }
     });
 
-    const aleatoriedade = 80; // Valor que define a força da aleatoriedade (quanto maior, maior a variação)
+    let probabilidades = [];
 
     for (let i = 1; i <= 5; i++) {
         const total = historicoFiltrado.length;
-        
+
         if (total > 0) {
             const probPar = (contagem[`bola${i}`].par / total) * 100;
             const probImpar = (contagem[`bola${i}`].impar / total) * 100;
 
             const palpiteElement = document.getElementById(`palpite-bola${i}`);
-            const randomFactor = Math.random() * aleatoriedade - (aleatoriedade / 2);
 
-            if (probPar + randomFactor > probImpar) {
-                palpiteElement.textContent = 'Par';
+            if (probPar > probImpar) {
+                palpiteElement.innerHTML = `<span>${i}º</span><span>Par</span>`;
+                probabilidades.push({ bola: i, probabilidade: probPar });
             } else {
-                palpiteElement.textContent = 'Ímpar';
+                palpiteElement.innerHTML = `<span>${i}º</span><span>Ímpar</span>`;
+                probabilidades.push({ bola: i, probabilidade: probImpar });
             }
         } else {
             const palpiteElement = document.getElementById(`palpite-bola${i}`);
             palpiteElement.textContent = '-';
+        }
+    }
+
+    // Ordena as probabilidades em ordem decrescente e pega os dois melhores palpites
+    probabilidades.sort((a, b) => b.probabilidade - a.probabilidade);
+    const melhoresPalpites = probabilidades.slice(0, 2);
+
+    // Atualiza os elementos com os melhores palpites
+    if (melhoresPalpites.length > 0) {
+        const melhorPalpiteElement1 = document.getElementById('palpite-melhor-bola1');
+        const melhorPalpiteElement2 = document.getElementById('palpite-melhor-bola2');
+
+        melhorPalpiteElement1.innerHTML = `<span>${melhoresPalpites[0].bola}º</span><span>${melhoresPalpites[0].probabilidade.toFixed(2)}%</span>`;
+        if (melhoresPalpites.length > 1) {
+            melhorPalpiteElement2.innerHTML = `<span>${melhoresPalpites[1].bola}º</span><span>${melhoresPalpites[1].probabilidade.toFixed(2)}%</span>`;
         }
     }
 }
