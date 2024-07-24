@@ -54,42 +54,41 @@ body {
     padding-top: 30px;
     margin-top: 20px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adiciona sombra para destaque */
-    .cards-bolas{
-        width: 100%;
+} 
+.card-palpite > .cards-bolas > .palpite-melhor-bola{
+    box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+}
+.card-palpite > .cards-bolas{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    div{
+        width: 60px;
+        height: 60px;
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        border: solid 1px #fff;
         justify-content: center;
-        gap: 4px;
-        div{
-            width: 60px;
-            height: 60px;
-            display: flex;
-            flex-direction: column;
-            border: solid 1px #fff;
-            justify-content: center;
-            align-items: center;
-            
-            border-radius: 50%;
-            background-color: #ccc;
-            padding: 5px;
-            color: #444950;
-        }
-        div.palpite-melhor-bola{
-            box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
-        }
-    } 
-    .hora-palpite{
-        position: absolute;
-        top: -20px;
-        left: 50%;
-        transform: translate(-50%);
-        background-color: #f3f4f5;
-        font-weight: bolder;
-        padding: 10px;
-        border-radius: 10px;
-        color: #222;
+        align-items: center;
+        border-radius: 50%;
+        background-color: #ccc;
+        padding: 5px;
+        color: #444950;
     }
+}
+.card-palpite >.hora-palpite{
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translate(-50%);
+    background-color: #f3f4f5;
+    font-weight: bolder;
+    padding: 10px;
+    border-radius: 10px;
+    color: #222;
 }
 @media (max-width: 800px) {
     .container{
